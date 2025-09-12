@@ -1,0 +1,37 @@
+export const suffixs = [
+  "N/A",
+  "JR",
+  "SR",
+  "I",
+  "II",
+  "III",
+  "IV",
+  "V",
+  "VI",
+  "VII",
+  "VIII",
+  "IX",
+  "X",
+];
+
+export const address = {
+  municipality: "OPOL",
+  province: "MISAMIS ORIENTAL",
+  zip_code: "9016",
+  barangays: [
+    { name: "AWANG", code: "104321001" },
+    { name: "BAGOCBOC", code: "104321002" },
+    { name: "BARRA", code: "104321003" },
+    { name: "BONBON", code: "104321004" },
+    { name: "CAUYONAN", code: "104321005" },
+    { name: "IGPIT", code: "104321006" },
+    { name: "LIMONDA", code: "104321007" },
+    { name: "LUYONG BONBON", code: "104321008" },
+    { name: "MALANANG", code: "104321009" },
+    { name: "NANGCAON", code: "104321010" },
+    { name: "PATAG", code: "104321011" },
+    { name: "POBLACION", code: "104321012" },
+    { name: "TABOC", code: "104321013" },
+    { name: "TINGALAN", code: "104321014" },
+  ],
+};
