@@ -1,9 +1,20 @@
 import { Text } from "@/components/ui/text";
-import { Dimensions, Image, ScrollView, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  RefreshControl,
+  ScrollView,
+  View,
+} from "react-native";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ChevronsDownUp, ChevronsUpDown, UserCheck } from "lucide-react-native";
+import {
+  ChevronRight,
+  ChevronsDownUp,
+  ChevronsUpDown,
+  UserCheck,
+} from "lucide-react-native";
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Route, router } from "expo-router";
 import { Icon } from "@/components/ui/icon";
 import User from "@/components/user";
@@ -16,10 +27,17 @@ import { useVerify } from "@/contexts/verify-context";
 const screenWidth = Dimensions.get("window").width;
 
 export default function Home() {
-  const { user } = useAuthContext();
+  const { user, getUser } = useAuthContext();
   const [minimize, setMinimize] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const { open } = useVerify();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await getUser();
+    setRefreshing(false);
+  }, [getUser]);
 
   const items: {
     title: string;
@@ -103,6 +121,14 @@ export default function Home() {
           paddingTop: 25,
           paddingBottom: 140,
         }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            colors={["#E11D48"]}
+            tintColor="#E11D48"
+            onRefresh={onRefresh}
+          />
+        }
       >
         <View className="p-4">
           <View className="flex-row items-center justify-between">
@@ -189,44 +215,65 @@ export default function Home() {
         </View>
       </ScrollView>
 
-      {minimize ? (
-        <View className="absolute bottom-4 right-4">
-          <Button
-            onPress={() => router.push("/account/verification/identity")}
-            size="icon"
-            className="flex-col size-14 gap-0 rounded-full"
-          >
-            <UserCheck size={20} strokeWidth={1.5} color="#ffff" />
-            <Text className="text-xs font-figtree-medium">Verify</Text>
-          </Button>
-        </View>
-      ) : (
-        <View className="absolute bottom-4 inset-x-4">
-          <Alert icon={UserCheck} className="border-primary">
-            <AlertTitle className="font-figtree-medium">
-              Verify Account
-            </AlertTitle>
-            <AlertDescription className="text-sm font-figtree-regular">
-              Get full access to all Kabaya services, get verified now!
-            </AlertDescription>
-            <View className="flex-row gap-2 items-center justify-end">
-              <Button
-                onPress={() => setMinimize(true)}
-                size="sm"
-                variant="link"
-              >
-                <Text className="font-figtree-medium">Minimize</Text>
-              </Button>
-              <Button
-                onPress={() => router.push("/account/verification/identity")}
-                size="sm"
-              >
-                <Text className="font-figtree-medium">Verify Now</Text>
-              </Button>
-            </View>
-          </Alert>
-        </View>
-      )}
+      {!user?.is_verified &&
+        (minimize ? (
+          <View className="absolute bottom-4 right-4">
+            <Button
+              onPress={() => {
+                if (user?.verification_status !== "pending") {
+                  router.push("/account/verification/identity");
+                }
+              }}
+              size="icon"
+              className="flex-col size-14 gap-0 rounded-full"
+            >
+              <UserCheck size={20} strokeWidth={1.5} color="#ffff" />
+              <Text className="text-xs font-figtree-medium">
+                {user?.verification_status === "pending" ? "Review" : "Verify"}
+              </Text>
+            </Button>
+          </View>
+        ) : (
+          <View className="absolute bottom-4 inset-x-4">
+            <Alert icon={UserCheck} className="border-primary">
+              <AlertTitle className="font-figtree-medium">
+                {user?.verification_status === "pending"
+                  ? "Your account is under review"
+                  : "Verify your account"}
+              </AlertTitle>
+              <AlertDescription className="text-sm font-figtree-regular">
+                {user?.verification_status === "pending"
+                  ? "We’re checking your account. Please wait a moment."
+                  : "Verify now to enjoy more features and services."}
+              </AlertDescription>
+              <View className="flex-row gap-2 items-center justify-end">
+                <Button
+                  onPress={() => setMinimize(true)}
+                  size="sm"
+                  variant="link"
+                >
+                  <Text className="font-figtree-medium">Minimize</Text>
+                </Button>
+                {user?.verification_status !== "pending" && (
+                  <Button
+                    onPress={() =>
+                      router.push("/account/verification/identity")
+                    }
+                    size="sm"
+                  >
+                    <Text className="font-figtree-medium">Verify Now</Text>
+                    <Icon
+                      as={ChevronRight}
+                      strokeWidth={1.5}
+                      size={18}
+                      color="#ffff"
+                    />
+                  </Button>
+                )}
+              </View>
+            </Alert>
+          </View>
+        ))}
     </React.Fragment>
   );
 }

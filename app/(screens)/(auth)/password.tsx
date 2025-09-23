@@ -1,11 +1,12 @@
 import Input from "@/components/input";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuthContext } from "@/contexts/auth-context";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 export default function Password() {
   const { createPassword, resetPassword, email, isForgotPassword } =
@@ -48,64 +49,64 @@ export default function Password() {
   };
 
   return (
-    <ScrollView
+    <KeyboardAwareScrollView
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
       contentContainerStyle={{
         flexGrow: 1,
         padding: 16,
-        gap: 40,
-        justifyContent: "space-between",
       }}
     >
-      <View className="gap-6">
-        <View className="flex-row items-center justify-between gap-2">
-          <View className="bg-primary flex-1 h-[6px] rounded-full" />
-          <View className="bg-primary flex-1 h-[6px] rounded-full" />
-          <View className="bg-primary flex-1 h-[6px] rounded-full" />
+      <View className="flex-1 justify-between gap-10">
+        <View className="gap-6">
+          <View className="flex-row items-center justify-between gap-2">
+            <View className="bg-primary flex-1 h-[6px] rounded-full" />
+            <View className="bg-primary flex-1 h-[6px] rounded-full" />
+            <View className="bg-primary flex-1 h-[6px] rounded-full" />
+          </View>
+          <View className="gap-1">
+            <Text className="font-figtree-bold text-2xl">
+              {isForgotPassword ? "Reset Password" : "Create Password"}
+            </Text>
+            <Text className="text-sm font-figtree-regular">
+              Please setup your password.
+            </Text>
+          </View>
+          <View className="gap-3">
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  label="Password"
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  value={value}
+                  error={errors.password?.message}
+                  secureTextEntry
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="password_confirmation"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  label="Confirm Password"
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  value={value}
+                  error={errors.password_confirmation?.message}
+                  secureTextEntry
+                />
+              )}
+            />
+          </View>
         </View>
-        <View className="gap-1">
-          <Text className="font-figtree-bold text-2xl">
-            {isForgotPassword ? "Reset Password" : "Create Password"}
-          </Text>
-          <Text className="text-sm font-figtree-regular">
-            Please setup your password.
-          </Text>
-        </View>
-        <View className="gap-3">
-          <Controller
-            control={control}
-            name="password"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                label="Password"
-                onChangeText={onChange}
-                onBlur={onBlur}
-                value={value}
-                error={errors.password?.message}
-                secureTextEntry
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="password_confirmation"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                label="Confirm Password"
-                onChangeText={onChange}
-                onBlur={onBlur}
-                value={value}
-                error={errors.password_confirmation?.message}
-                secureTextEntry
-              />
-            )}
-          />
-        </View>
+        <Button onPress={handleSubmit(onSubmit)}>
+          <Text className="font-figtree-medium">Finish</Text>
+        </Button>
       </View>
-      <Button onPress={handleSubmit(onSubmit)}>
-        <Text className="font-figtree-medium">Finish</Text>
-      </Button>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }

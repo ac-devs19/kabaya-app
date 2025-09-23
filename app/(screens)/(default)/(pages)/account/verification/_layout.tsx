@@ -35,7 +35,7 @@ export default function VerificationLayout() {
       <Stack.Screen name="identity" />
       <Stack.Screen name="address" />
       <Stack.Screen name="confirm-information" />
-      <Stack.Screen name="selfie" />
+      <Stack.Screen name="id" />
     </Stack>
   );
 }

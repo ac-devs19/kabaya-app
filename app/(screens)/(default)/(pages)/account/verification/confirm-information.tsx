@@ -176,7 +176,7 @@ export default function ConfirmInformation() {
           </View>
         </View>
       </View>
-      <Button>
+      <Button onPress={() => router.push("/account/verification/id")}>
         <Text className="font-figtree-medium">Next</Text>
       </Button>
     </ScrollView>

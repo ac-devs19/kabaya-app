@@ -1,11 +1,17 @@
-import { Image } from "react-native";
+import { cn } from "@/lib/utils";
+import { Image, ImageProps } from "react-native";
 
-export default function AppLogo() {
+interface AppLogoProps extends ImageProps {
+  className?: string;
+}
+
+export default function AppLogo({ className, ...props }: AppLogoProps) {
   return (
     <Image
       resizeMode="contain"
       source={require("@/assets/images/logo.png")}
-      className="w-[120px] h-10"
+      className={cn("w-[120px] h-10", className)}
+      {...props}
     />
   );
 }

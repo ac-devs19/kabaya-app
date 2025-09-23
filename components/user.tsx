@@ -9,6 +9,14 @@ import { cn } from "@/lib/utils";
 export default function User() {
   const { user } = useAuthContext();
 
+  function capitalizeName(name: string) {
+    return name
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  }
+
   return (
     <View className="flex-1 flex-row items-center gap-2">
       <Image
@@ -17,7 +25,7 @@ export default function User() {
       />
       <View className="flex-1 gap-1">
         <Text className="text-sm text-primary font-figtree-semibold">
-          {user?.is_verified ? `Hi, ${user?.first_name}` : "Welcome"}
+          Hi, {user ? capitalizeName(user.first_name) : ""}
         </Text>
         <Badge
           className={cn(

@@ -25,6 +25,10 @@ interface User {
   street_name: string;
   postal_code: string;
   phone_number: string;
+  profile_picture: string;
+  id_photo: string;
+  selfie_id_photo: string;
+  verification_status: string;
   is_verified: boolean;
   role: string;
   email: string;

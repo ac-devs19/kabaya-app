@@ -1,11 +1,12 @@
 import Input from "@/components/input";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuthContext } from "@/contexts/auth-context";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 export default function ChangePassword() {
   const { changePassword } = useAuthContext();
@@ -45,63 +46,63 @@ export default function ChangePassword() {
   };
 
   return (
-    <ScrollView
+    <KeyboardAwareScrollView
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
       contentContainerStyle={{
         flexGrow: 1,
         padding: 16,
-        gap: 40,
-        justifyContent: "space-between",
       }}
     >
-      <View className="gap-3">
-        <Controller
-          control={control}
-          name="current_password"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              label="Current Password"
-              onChangeText={onChange}
-              onBlur={onBlur}
-              value={value}
-              error={errors.current_password?.message}
-              secureTextEntry
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="password"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              label="New Password"
-              onChangeText={onChange}
-              onBlur={onBlur}
-              value={value}
-              error={errors.password?.message}
-              secureTextEntry
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="password_confirmation"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              label="Confirm Password"
-              onChangeText={onChange}
-              onBlur={onBlur}
-              value={value}
-              error={errors.password_confirmation?.message}
-              secureTextEntry
-            />
-          )}
-        />
+      <View className="flex-1 justify-between gap-10">
+        <View className="gap-3">
+          <Controller
+            control={control}
+            name="current_password"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                label="Current Password"
+                onChangeText={onChange}
+                onBlur={onBlur}
+                value={value}
+                error={errors.current_password?.message}
+                secureTextEntry
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="password"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                label="New Password"
+                onChangeText={onChange}
+                onBlur={onBlur}
+                value={value}
+                error={errors.password?.message}
+                secureTextEntry
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="password_confirmation"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                label="Confirm Password"
+                onChangeText={onChange}
+                onBlur={onBlur}
+                value={value}
+                error={errors.password_confirmation?.message}
+                secureTextEntry
+              />
+            )}
+          />
+        </View>
+        <Button onPress={handleSubmit(onSubmit)}>
+          <Text className="font-figtree-medium">Save Changes</Text>
+        </Button>
       </View>
-      <Button onPress={handleSubmit(onSubmit)}>
-        <Text className="font-figtree-medium">Save Changes</Text>
-      </Button>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }

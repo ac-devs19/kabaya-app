@@ -6,6 +6,7 @@ import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { UserCheck } from "lucide-react-native";
 import { router } from "expo-router";
+import { useAuthContext } from "./auth-context";
 
 interface VerifyContextType {
   open: () => void;
@@ -15,6 +16,7 @@ const VerifyContext = createContext<VerifyContextType | undefined>(undefined);
 
 export const VerifyProvider = ({ children }: { children: ReactNode }) => {
   const { isVisible, open, close } = useBottomSheet();
+  const { user } = useAuthContext();
 
   return (
     <VerifyContext.Provider value={{ open }}>
@@ -29,27 +31,35 @@ export const VerifyProvider = ({ children }: { children: ReactNode }) => {
               className="text-primary"
             />
             <View className="items-center gap-3">
-              <Text className="font-figtree-bold text-xl">
-                Verify Your Account
+              <Text className="font-figtree-bold text-xl text-center">
+                {user?.verification_status === "pending"
+                  ? "Your account is under review"
+                  : "Verify your account"}
               </Text>
-              <Text className="font-figtree-regular">
-                Verify now to enjoy more features and services.
+              <Text className="font-figtree-regular text-center">
+                {user?.verification_status === "pending"
+                  ? "We’re checking your account. Please wait a moment."
+                  : "Verify now to enjoy more features and services."}
               </Text>
             </View>
           </View>
-          <View className="gap-2">
-            <Button
-              onPress={() => {
-                close();
-                router.push("/account/verification/identity");
-              }}
-            >
-              <Text className="font-figtree-medium">Verify Now</Text>
-            </Button>
-            <Button onPress={close} variant="ghost">
-              <Text className="font-figtree-medium">I&apos;ll do it later</Text>
-            </Button>
-          </View>
+          {user?.verification_status !== "pending" && (
+            <View className="gap-2">
+              <Button
+                onPress={() => {
+                  close();
+                  router.push("/account/verification/identity");
+                }}
+              >
+                <Text className="font-figtree-medium">Verify Now</Text>
+              </Button>
+              <Button onPress={close} variant="ghost">
+                <Text className="font-figtree-medium">
+                  I&apos;ll do it later
+                </Text>
+              </Button>
+            </View>
+          )}
         </View>
       </BottomSheet>
     </VerifyContext.Provider>

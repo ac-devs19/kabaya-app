@@ -1,12 +1,6 @@
 import { Label } from "@/components/ui/label";
 import { Text } from "@/components/ui/text";
-import {
-  Alert,
-  Platform,
-  ScrollView,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, Platform, TouchableOpacity, View } from "react-native";
 import {
   Select,
   SelectContent,
@@ -18,7 +12,7 @@ import {
 import { ScrollView as SelectScrollView } from "react-native-gesture-handler";
 import { suffixs } from "@/components/others";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState } from "react";
+import React, { useState } from "react";
 import DatetimePicker from "@/components/datetime-picker";
 import { Button } from "@/components/ui/button";
 import { Mars, Venus } from "lucide-react-native";
@@ -34,6 +28,7 @@ import { cn } from "@/lib/utils";
 import axios from "@/api/axios";
 import { router } from "expo-router";
 import { useLoader } from "@/contexts/loader-context";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 export default function Identity() {
   const { user, getUser } = useAuthContext();
@@ -75,12 +70,12 @@ export default function Identity() {
   } = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      first_name: user?.first_name,
+      first_name: user?.first_name ?? "",
       middle_name: user?.middle_name ?? "",
-      last_name: user?.last_name,
+      last_name: user?.last_name ?? "",
       suffix: user?.suffix ?? "N/A",
       birth_date: user?.birth_date ? new Date(user.birth_date) : new Date(),
-      phone_number: user?.phone_number,
+      phone_number: user?.phone_number ?? "",
       sex: user?.sex ?? "MALE",
     },
   });
@@ -112,192 +107,198 @@ export default function Identity() {
   };
 
   return (
-    <ScrollView
+    <KeyboardAwareScrollView
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
       contentContainerStyle={{
         flexGrow: 1,
         padding: 16,
-        gap: 40,
-        justifyContent: "space-between",
       }}
     >
-      <View className="gap-6">
-        <View className="flex-row items-center justify-between gap-2">
-          <View className="bg-primary flex-1 h-[6px] rounded-full" />
-          <View className="bg-muted flex-1 h-[6px] rounded-full" />
-          <View className="bg-muted flex-1 h-[6px] rounded-full" />
-        </View>
-        <View className="gap-1">
-          <Text className="font-figtree-bold text-2xl">
-            Identity Verification
-          </Text>
-          <Text className="text-sm font-figtree-regular">
-            Please enter your personal information.
-          </Text>
-        </View>
-        <View className="gap-3">
-          <Text className="font-figtree-semibold">Personal Information</Text>
-          <View className="flex-row gap-2">
+      <View className="flex-1 justify-between gap-10">
+        <View className="gap-6">
+          <View className="flex-row items-center justify-between gap-2">
+            <View className="bg-primary flex-1 h-[6px] rounded-full" />
+            <View className="bg-muted flex-1 h-[6px] rounded-full" />
+            <View className="bg-muted flex-1 h-[6px] rounded-full" />
+          </View>
+          <View className="gap-1">
+            <Text className="font-figtree-bold text-2xl">
+              Identity Verification
+            </Text>
+            <Text className="text-sm font-figtree-regular">
+              Please enter your personal information.
+            </Text>
+          </View>
+          <View className="gap-3">
+            <Text className="font-figtree-semibold">Personal Information</Text>
+            <View className="flex-row gap-2">
+              <Controller
+                control={control}
+                name="first_name"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    label="First Name"
+                    onChangeText={(text) => onChange(text.toUpperCase())}
+                    onBlur={onBlur}
+                    value={value}
+                    error={errors.first_name?.message}
+                    containerClassName="flex-1"
+                  />
+                )}
+              />
+              <Controller
+                control={control}
+                name="suffix"
+                render={({ field: { onChange, value } }) => (
+                  <View className="gap-0.5">
+                    <Label className="font-figtree-medium">Suffix</Label>
+                    <Select
+                      value={value ? { label: value, value } : undefined}
+                      onValueChange={(option) => onChange(option?.value)}
+                    >
+                      <SelectTrigger className="w-[140px]">
+                        <SelectValue
+                          placeholder="Select"
+                          className="font-figtree-regular"
+                        />
+                      </SelectTrigger>
+                      <SelectContent
+                        insets={contentInsets}
+                        className="w-[140px]"
+                      >
+                        <SelectScrollView className="max-h-52">
+                          <SelectGroup>
+                            {suffixs.map((suffix) => (
+                              <SelectItem
+                                key={suffix}
+                                label={suffix}
+                                value={suffix}
+                              />
+                            ))}
+                          </SelectGroup>
+                        </SelectScrollView>
+                      </SelectContent>
+                    </Select>
+                  </View>
+                )}
+              />
+            </View>
+            <View className="gap-1.5">
+              <Controller
+                control={control}
+                name="middle_name"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    label="Middle Name"
+                    onChangeText={(text) => onChange(text.toUpperCase())}
+                    onBlur={onBlur}
+                    value={value ?? ""}
+                    error={errors.middle_name?.message}
+                    disabled={is_middle_name}
+                  />
+                )}
+              />
+              <View className="flex-row items-center justify-end gap-2">
+                <Checkbox
+                  checked={is_middle_name}
+                  onCheckedChange={onCheckedChange}
+                />
+                <Label
+                  onPress={() => onCheckedChange(!is_middle_name)}
+                  className="font-figtree-medium"
+                >
+                  I have no middle name
+                </Label>
+              </View>
+            </View>
             <Controller
               control={control}
-              name="first_name"
+              name="last_name"
               render={({ field: { onChange, onBlur, value } }) => (
                 <Input
-                  label="First Name"
+                  label="Last Name"
                   onChangeText={(text) => onChange(text.toUpperCase())}
                   onBlur={onBlur}
                   value={value}
-                  error={errors.first_name?.message}
-                  containerClassName="flex-1"
+                  error={errors.last_name?.message}
                 />
               )}
             />
             <Controller
               control={control}
-              name="suffix"
+              name="birth_date"
               render={({ field: { onChange, value } }) => (
                 <View className="gap-0.5">
-                  <Label className="font-figtree-medium">Suffix</Label>
-                  <Select
-                    value={value ? { label: value, value } : undefined}
-                    onValueChange={(option) => onChange(option?.value)}
-                  >
-                    <SelectTrigger className="w-[140px]">
-                      <SelectValue
-                        placeholder="Select"
-                        className="font-figtree-regular"
-                      />
-                    </SelectTrigger>
-                    <SelectContent insets={contentInsets} className="w-[140px]">
-                      <SelectScrollView className="max-h-52">
-                        <SelectGroup>
-                          {suffixs.map((suffix) => (
-                            <SelectItem
-                              key={suffix}
-                              label={suffix}
-                              value={suffix}
-                            />
-                          ))}
-                        </SelectGroup>
-                      </SelectScrollView>
-                    </SelectContent>
-                  </Select>
+                  <Label className="font-figtree-medium">Birth Date</Label>
+                  <DatetimePicker
+                    date={value ?? undefined}
+                    setDate={onChange}
+                  />
                 </View>
               )}
             />
-          </View>
-          <View className="gap-1.5">
             <Controller
               control={control}
-              name="middle_name"
+              name="phone_number"
               render={({ field: { onChange, onBlur, value } }) => (
                 <Input
-                  label="Middle Name"
-                  onChangeText={(text) => onChange(text.toUpperCase())}
+                  label="Phone Number"
+                  onChangeText={onChange}
                   onBlur={onBlur}
-                  value={value ?? ""}
-                  error={errors.middle_name?.message}
-                  disabled={is_middle_name}
+                  value={value}
+                  error={errors.phone_number?.message}
+                  maxLength={10}
+                  keyboardType="phone-pad"
                 />
               )}
             />
-            <View className="flex-row items-center justify-end gap-2">
-              <Checkbox
-                checked={is_middle_name}
-                onCheckedChange={onCheckedChange}
-              />
-              <Label
-                onPress={() => onCheckedChange(!is_middle_name)}
-                className="font-figtree-medium"
-              >
-                I have no middle name
-              </Label>
-            </View>
+            <Controller
+              control={control}
+              name="sex"
+              render={({ field: { onChange, value } }) => (
+                <RadioGroup
+                  className="flex-row gap-4"
+                  value={value}
+                  onValueChange={onChange}
+                >
+                  <TouchableOpacity
+                    onPress={() => setValue("sex", "MALE")}
+                    activeOpacity={0.7}
+                    className={cn(
+                      "border flex-1 h-14 rounded-md flex-row items-center justify-between px-4",
+                      value === "MALE" ? "border-primary" : "border-border"
+                    )}
+                  >
+                    <View className="flex-row items-center gap-2">
+                      <Icon as={Mars} size={22} strokeWidth={1.5} />
+                      <Text className="font-figtree-regular">MALE</Text>
+                    </View>
+                    <RadioGroupItem value="MALE" />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setValue("sex", "FEMALE")}
+                    activeOpacity={0.7}
+                    className={cn(
+                      "border flex-1 h-14 rounded-md flex-row items-center justify-between px-4",
+                      value === "FEMALE" ? "border-primary" : "border-border"
+                    )}
+                  >
+                    <View className="flex-row items-center gap-2">
+                      <Icon as={Venus} size={22} strokeWidth={1.5} />
+                      <Text className="font-figtree-regular">FEMALE</Text>
+                    </View>
+                    <RadioGroupItem value="FEMALE" />
+                  </TouchableOpacity>
+                </RadioGroup>
+              )}
+            />
           </View>
-          <Controller
-            control={control}
-            name="last_name"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                label="Last Name"
-                onChangeText={(text) => onChange(text.toUpperCase())}
-                onBlur={onBlur}
-                value={value}
-                error={errors.last_name?.message}
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="birth_date"
-            render={({ field: { onChange, value } }) => (
-              <View className="gap-0.5">
-                <Label className="font-figtree-medium">Birth Date</Label>
-                <DatetimePicker date={value ?? undefined} setDate={onChange} />
-              </View>
-            )}
-          />
-          <Controller
-            control={control}
-            name="phone_number"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                label="Phone Number"
-                onChangeText={onChange}
-                onBlur={onBlur}
-                value={value}
-                error={errors.phone_number?.message}
-                maxLength={10}
-                keyboardType="phone-pad"
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="sex"
-            render={({ field: { onChange, value } }) => (
-              <RadioGroup
-                className="flex-row gap-4"
-                value={value}
-                onValueChange={onChange}
-              >
-                <TouchableOpacity
-                  onPress={() => setValue("sex", "MALE")}
-                  activeOpacity={0.7}
-                  className={cn(
-                    "border flex-1 h-14 rounded-md flex-row items-center justify-between px-4",
-                    value === "MALE" ? "border-primary" : "border-border"
-                  )}
-                >
-                  <View className="flex-row items-center gap-2">
-                    <Icon as={Mars} size={22} strokeWidth={1.5} />
-                    <Text className="font-figtree-regular">MALE</Text>
-                  </View>
-                  <RadioGroupItem value="MALE" />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => setValue("sex", "FEMALE")}
-                  activeOpacity={0.7}
-                  className={cn(
-                    "border flex-1 h-14 rounded-md flex-row items-center justify-between px-4",
-                    value === "FEMALE" ? "border-primary" : "border-border"
-                  )}
-                >
-                  <View className="flex-row items-center gap-2">
-                    <Icon as={Venus} size={22} strokeWidth={1.5} />
-                    <Text className="font-figtree-regular">FEMALE</Text>
-                  </View>
-                  <RadioGroupItem value="FEMALE" />
-                </TouchableOpacity>
-              </RadioGroup>
-            )}
-          />
         </View>
+        <Button onPress={handleSubmit(onSubmit)}>
+          <Text className="font-figtree-medium">Next</Text>
+        </Button>
       </View>
-      <Button onPress={handleSubmit(onSubmit)}>
-        <Text className="font-figtree-medium">Next</Text>
-      </Button>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }
