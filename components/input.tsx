@@ -44,6 +44,7 @@ export default function Input({
           className={cn(
             "font-figtree-regular focus:border-primary",
             error && "border-destructive",
+            secureTextEntry && "pr-12",
             keyboardType === "phone-pad" && "pl-[73px]",
             inputClassName
           )}

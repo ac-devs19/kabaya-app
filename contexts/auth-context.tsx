@@ -7,9 +7,9 @@ import {
 } from "react";
 import axios from "@/api/axios";
 import { router } from "expo-router";
-import { Alert } from "react-native";
 import { useLoader } from "@/contexts/loader-context";
 import { setToken } from "@/services/auth-storage";
+import { useToast } from "@/components/toast";
 
 interface User {
   id: number;
@@ -34,22 +34,22 @@ interface User {
   email: string;
 }
 
-interface loginData {
+interface LoginData {
   email: string;
   password: string;
 }
 
-interface forgotPasswordData {
+interface ForgotPasswordData {
   email: string;
 }
 
-interface resetPasswordData {
+interface ResetPasswordData {
   password: string;
   password_confirmation: string;
   email: string;
 }
 
-interface createAccountData {
+interface CreateAccountData {
   first_name: string;
   middle_name?: string;
   last_name: string;
@@ -57,18 +57,18 @@ interface createAccountData {
   email: string;
 }
 
-interface verifyOtpData {
+interface VerifyOtpData {
   otp: string;
   email: string;
 }
 
-interface createPasswordData {
+interface CreatePasswordData {
   password: string;
   password_confirmation: string;
   email: string;
 }
 
-interface changePasswordData {
+interface ChangePasswordData {
   current_password: string;
   password: string;
   password_confirmation: string;
@@ -79,14 +79,14 @@ interface AuthContextType {
   loading: boolean;
   email: string;
   isForgotPassword: boolean;
-  login: (data: loginData) => Promise<void>;
-  forgotPassword: (data: forgotPasswordData) => Promise<void>;
-  resetPassword: (data: resetPasswordData) => Promise<void>;
-  createAccount: (data: createAccountData) => Promise<void>;
-  verifyOtp: (data: verifyOtpData) => Promise<void>;
+  login: (data: LoginData) => Promise<void>;
+  forgotPassword: (data: ForgotPasswordData) => Promise<void>;
+  resetPassword: (data: ResetPasswordData) => Promise<void>;
+  createAccount: (data: CreateAccountData) => Promise<void>;
+  verifyOtp: (data: VerifyOtpData) => Promise<void>;
   resendOtp: () => Promise<void>;
-  createPassword: (data: createPasswordData) => Promise<void>;
-  changePassword: (data: changePasswordData) => Promise<void>;
+  createPassword: (data: CreatePasswordData) => Promise<void>;
+  changePassword: (data: ChangePasswordData) => Promise<void>;
   logout: () => Promise<void>;
   getUser: () => Promise<void>;
 }
@@ -103,6 +103,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [email, setEmail] = useState("");
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const { setLoader } = useLoader();
+  const { error } = useToast();
 
   useEffect(() => {
     getUser();
@@ -119,76 +120,80 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const login = async (data: loginData) => {
+  const login = async (data: LoginData) => {
     setLoader(true);
     try {
       const response = await axios.post("/login", data);
       await setToken(response.data.token);
       await getUser();
-    } catch (error: any) {
-      Alert.alert("Error!", error.response.data.message);
+    } catch (err: any) {
+      if (err.response.status === 422) {
+        error("Error!", err.response.data.message);
+      }
     } finally {
       setLoader(false);
     }
   };
 
-  const forgotPassword = async (data: forgotPasswordData) => {
+  const forgotPassword = async (data: ForgotPasswordData) => {
     setLoader(true);
     try {
       await axios.post("/forgot-password", data);
       setIsForgotPassword(true);
       setEmail(data.email);
       router.push("/otp-verification");
-    } catch (error: any) {
-      if (error.response.status === 422) {
-        Alert.alert("Error!", error.response.data.message);
+    } catch (err: any) {
+      if (err.response.status === 422) {
+        error("Error!", err.response.data.message);
       }
     } finally {
       setLoader(false);
     }
   };
 
-  const resetPassword = async (data: resetPasswordData) => {
+  const resetPassword = async (data: ResetPasswordData) => {
     setLoader(true);
     try {
       await axios.post("/reset-password", data);
       router.replace("/sign-in");
       setEmail("");
-    } catch (error: any) {
-      if (error.response.status === 422) {
-        Alert.alert("Error!", error.response.data.message);
+    } catch (err: any) {
+      if (err.response.status === 422) {
+        error("Error!", err.response.data.message);
       }
     } finally {
       setLoader(false);
     }
   };
 
-  const createAccount = async (data: createAccountData) => {
+  const createAccount = async (data: CreateAccountData) => {
     setLoader(true);
     try {
       await axios.post("/create-account", data);
       setIsForgotPassword(false);
       setEmail(data.email);
       router.push("/otp-verification");
-    } catch (error: any) {
-      Alert.alert("Error!", error.response.data.message);
+    } catch (err: any) {
+      if (err.response.status === 422) {
+        error("Error!", err.response.data.message);
+      }
     } finally {
       setLoader(false);
     }
   };
 
-  const verifyOtp = async (data: verifyOtpData) => {
+  const verifyOtp = async (data: VerifyOtpData) => {
     setLoader(true);
     try {
       await axios.post("/verify-otp", data);
       router.dismissAll();
       router.replace("/password");
-    } catch (error: any) {
-      if (error.response.status === 400) {
-        Alert.alert("Error!", error.response.data.message);
+    } catch (err: any) {
+      if (err.response.status === 400) {
+        error("Error!", err.response.data.message);
       }
-      if (error.response.status === 422) {
-        Alert.alert("Error!", error.response.data.message);
+      if (err.response.status === 422) {
+        error("Error!", err.response.data.message);
       }
     } finally {
       setLoader(false);
@@ -204,7 +209,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const createPassword = async (data: createPasswordData) => {
+  const createPassword = async (data: CreatePasswordData) => {
     setLoader(true);
     try {
       const response = await axios.post("/create-password", data);
@@ -212,23 +217,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       await getUser();
       router.replace("/welcome");
       setEmail("");
-    } catch (error: any) {
-      if (error.response.status === 422) {
-        Alert.alert("Error!", error.response.data.message);
+    } catch (err: any) {
+      if (err.response.status === 422) {
+        error("Error!", err.response.data.message);
       }
     } finally {
       setLoader(false);
     }
   };
 
-  const changePassword = async (data: changePasswordData) => {
+  const changePassword = async (data: ChangePasswordData) => {
     setLoader(true);
     try {
       await axios.post("/change-password", data);
       router.back();
-    } catch (error: any) {
-      if (error.response.status === 422) {
-        Alert.alert("Error!", error.response.data.message);
+    } catch (err: any) {
+      if (err.response.status === 422) {
+        error("Error!", err.response.data.message);
       }
     } finally {
       setLoader(false);

@@ -12,6 +12,7 @@ import { PortalHost } from "@rn-primitives/portal";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AuthProvider } from "@/contexts/auth-context";
 import { LoaderProvider } from "@/contexts/loader-context";
+import { ToastProvider } from "@/components/toast";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -40,17 +41,19 @@ export default function RootLayout() {
       <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
       <GestureHandlerRootView style={{ flex: 1 }}>
         <LoaderProvider>
-          <AuthProvider>
-            <Stack
-              screenOptions={{
-                headerShown: false,
-              }}
-            >
-              <Stack.Screen name="index" />
-              <Stack.Screen name="(screens)" />
-            </Stack>
-            <PortalHost />
-          </AuthProvider>
+          <ToastProvider>
+            <AuthProvider>
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                }}
+              >
+                <Stack.Screen name="index" />
+                <Stack.Screen name="(screens)" />
+              </Stack>
+              <PortalHost />
+            </AuthProvider>
+          </ToastProvider>
         </LoaderProvider>
       </GestureHandlerRootView>
     </ThemeProvider>
