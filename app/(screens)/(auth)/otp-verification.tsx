@@ -8,7 +8,7 @@ import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { InputOTPWithSeparator } from "@/components/input-otp";
+import Input from "@/components/input";
 
 export default function OtpVerification() {
   const { email, verifyOtp, resendOtp } = useAuthContext();
@@ -46,9 +46,9 @@ export default function OtpVerification() {
       <View className="flex-1 justify-between gap-10">
         <View className="gap-6">
           <View className="flex-row items-center justify-between gap-2">
-            <View className="bg-primary flex-1 h-[6px] rounded-full" />
-            <View className="bg-primary flex-1 h-[6px] rounded-full" />
-            <View className="bg-muted flex-1 h-[6px] rounded-full" />
+            <View className="bg-primary flex-1 h-1.5 rounded-full" />
+            <View className="bg-primary flex-1 h-1.5 rounded-full" />
+            <View className="bg-muted flex-1 h-1.5 rounded-full" />
           </View>
           <View className="gap-1">
             <Text className="font-figtree-bold text-2xl">
@@ -65,13 +65,19 @@ export default function OtpVerification() {
               control={control}
               name="otp"
               render={({ field: { onChange, onBlur, value } }) => (
-                <InputOTPWithSeparator
-                  length={6}
-                  value={value}
+                <Input
+                  label="OTP"
+                  keyboardType="numeric"
+                  onChangeText={(text) => {
+                    onChange(text);
+                    if (text.length === 6) {
+                      handleSubmit(onSubmit)();
+                    }
+                  }}
                   onBlur={onBlur}
-                  onChangeText={onChange}
-                  onComplete={() => handleSubmit(onSubmit)()}
+                  value={value}
                   error={errors.otp?.message}
+                  maxLength={6}
                 />
               )}
             />

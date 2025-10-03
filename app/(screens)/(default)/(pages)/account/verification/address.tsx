@@ -89,9 +89,9 @@ export default function Address() {
       <View className="flex-1 justify-between gap-10">
         <View className="gap-6">
           <View className="flex-row items-center justify-between gap-2">
-            <View className="bg-primary flex-1 h-[6px] rounded-full" />
-            <View className="bg-primary flex-1 h-[6px] rounded-full" />
-            <View className="bg-muted flex-1 h-[6px] rounded-full" />
+            <View className="bg-primary flex-1 h-1.5 rounded-full" />
+            <View className="bg-primary flex-1 h-1.5 rounded-full" />
+            <View className="bg-muted flex-1 h-1.5 rounded-full" />
           </View>
           <View className="gap-1">
             <Text className="font-figtree-bold text-2xl">Current Address</Text>
@@ -187,6 +187,8 @@ export default function Address() {
                   onBlur={onBlur}
                   value={value}
                   error={errors.street_name?.message}
+                  textContentType="streetAddressLine1"
+                  autoComplete="street-address"
                 />
               )}
             />

@@ -3,7 +3,7 @@ import { router, Stack } from "expo-router";
 import { ArrowLeft, ChevronLeft } from "lucide-react-native";
 import { Platform, TouchableOpacity } from "react-native";
 
-export default function PrivacySecurityLayout() {
+export default function PdfLayout() {
   return (
     <Stack
       screenOptions={{
@@ -37,15 +37,12 @@ export default function PrivacySecurityLayout() {
       }}
     >
       <Stack.Screen
-        name="personal-information"
-        options={{
-          title: "Personal Information",
-        }}
-      />
-      <Stack.Screen
-        name="change-password"
-        options={{
-          title: "Change Password",
+        name="[id]"
+        options={({ route }) => {
+          const params = route.params as { name: string };
+          return {
+            title: params.name,
+          };
         }}
       />
     </Stack>

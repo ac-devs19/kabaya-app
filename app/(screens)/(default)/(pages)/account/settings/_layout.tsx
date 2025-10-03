@@ -1,7 +1,7 @@
 import { Icon } from "@/components/ui/icon";
 import { router, Stack } from "expo-router";
-import { ChevronLeft } from "lucide-react-native";
-import { TouchableOpacity } from "react-native";
+import { ArrowLeft, ChevronLeft } from "lucide-react-native";
+import { Platform, TouchableOpacity } from "react-native";
 
 export default function SettingLayout() {
   return (
@@ -21,7 +21,7 @@ export default function SettingLayout() {
                 onPress={() => router.back()}
               >
                 <Icon
-                  as={ChevronLeft}
+                  as={Platform.OS === "ios" ? ChevronLeft : ArrowLeft}
                   size={24}
                   strokeWidth={1.5}
                   className="text-primary"

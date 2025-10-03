@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import ThemeToggle from "@/components/theme-toggle";
 import { useAuthContext } from "@/contexts/auth-context";
 import { useVerify } from "@/contexts/verify-context";
+import { useAppColors } from "@/lib/theme";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -32,6 +33,7 @@ export default function Home() {
   const [expanded, setExpanded] = useState(false);
   const { open } = useVerify();
   const [refreshing, setRefreshing] = useState(false);
+  const { primary } = useAppColors();
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -48,15 +50,17 @@ export default function Home() {
   }[] = [
     {
       title: "Sangguniang Bayan",
-      icon: require("@/assets/images/services/sb.png"),
-      href: "/",
+      icon: require("@/assets/images/services/sangguniang-bayan/logo.png"),
+      href: "/home/services/sb",
       new: true,
       is_verified: user?.is_verified,
     },
     {
-      title: "Coming Soon",
+      title: "Serbisyong Bago",
       icon: null,
-      href: "/",
+      href: "/home/services/jb",
+      new: true,
+      is_verified: user?.is_verified,
     },
     {
       title: "Coming Soon",
@@ -124,8 +128,8 @@ export default function Home() {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            colors={["#E11D48"]}
-            tintColor="#E11D48"
+            colors={[primary]}
+            tintColor={primary}
             onRefresh={onRefresh}
           />
         }

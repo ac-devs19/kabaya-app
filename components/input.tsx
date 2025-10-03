@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Eye, EyeOff } from "lucide-react-native";
+import { useAppColors } from "@/lib/theme";
 
 interface InputProps extends TextInputProps {
   label: string;
@@ -29,6 +30,7 @@ export default function Input({
   ...props
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
+  const { primary } = useAppColors();
 
   return (
     <View className={cn("gap-0.5", containerClassName)}>
@@ -40,7 +42,6 @@ export default function Input({
       </Label>
       <View className="relative">
         <Inpt
-          {...props}
           className={cn(
             "font-figtree-regular focus:border-primary",
             error && "border-destructive",
@@ -49,7 +50,10 @@ export default function Input({
             inputClassName
           )}
           editable={!disabled}
-          secureTextEntry={secureTextEntry ? !showPassword : false}
+          secureTextEntry={secureTextEntry && !showPassword}
+          keyboardType={keyboardType}
+          selectionColor={primary}
+          {...props}
         />
         {secureTextEntry && (
           <View className="absolute inset-y-0 right-0.5 justify-center">

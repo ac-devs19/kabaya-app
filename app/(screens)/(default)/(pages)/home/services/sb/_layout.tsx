@@ -3,7 +3,7 @@ import { router, Stack } from "expo-router";
 import { ArrowLeft, ChevronLeft } from "lucide-react-native";
 import { Platform, TouchableOpacity } from "react-native";
 
-export default function PrivacySecurityLayout() {
+export default function SBLayout() {
   return (
     <Stack
       screenOptions={{
@@ -37,15 +37,15 @@ export default function PrivacySecurityLayout() {
       }}
     >
       <Stack.Screen
-        name="personal-information"
+        name="index"
         options={{
-          title: "Personal Information",
+          title: "Sangguniang Bayan",
         }}
       />
       <Stack.Screen
-        name="change-password"
+        name="ordinance"
         options={{
-          title: "Change Password",
+          headerShown: false,
         }}
       />
     </Stack>

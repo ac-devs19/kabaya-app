@@ -172,9 +172,9 @@ export default function Id() {
       >
         <View className="gap-6">
           <View className="flex-row items-center justify-between gap-2">
-            <View className="bg-primary flex-1 h-[6px] rounded-full" />
-            <View className="bg-primary flex-1 h-[6px] rounded-full" />
-            <View className="bg-primary flex-1 h-[6px] rounded-full" />
+            <View className="bg-primary flex-1 h-1.5 rounded-full" />
+            <View className="bg-primary flex-1 h-1.5 rounded-full" />
+            <View className="bg-primary flex-1 h-1.5 rounded-full" />
           </View>
           <View className="gap-1">
             <Text className="font-figtree-bold text-2xl">Upload Your ID</Text>

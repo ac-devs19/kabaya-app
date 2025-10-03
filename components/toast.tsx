@@ -1,4 +1,5 @@
 import { Text } from "@/components/ui/text";
+import { useAppColors } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { AlertCircle, Check, Info, X } from "lucide-react-native";
 import React, {
@@ -77,9 +78,7 @@ export function Toast({
   const height = useSharedValue(DYNAMIC_ISLAND_HEIGHT);
   const borderRadius = useSharedValue(18.5);
   const contentOpacity = useSharedValue(0);
-
-  // Dynamic Island colors (dark theme optimized)
-  const mutedTextColor = "#8E8E93"; // iOS secondary text color
+  const { mutedForeground } = useAppColors();
 
   useEffect(() => {
     const hasContentToShow = Boolean(title || description || action);
@@ -314,7 +313,7 @@ export function Toast({
                 onPress={dismiss}
                 style={{ marginLeft: 8, padding: 4, borderRadius: 8 }}
               >
-                <X size={14} color={mutedTextColor} />
+                <X size={14} color={mutedForeground} />
               </TouchableOpacity>
             </Animated.View>
           )}

@@ -1,4 +1,5 @@
 import { DarkTheme, DefaultTheme, type Theme } from "@react-navigation/native";
+import { useColorScheme } from "nativewind";
 
 export const THEME = {
   light: {
@@ -78,4 +79,15 @@ export const NAV_THEME: Record<"light" | "dark", Theme> = {
       text: THEME.dark.foreground,
     },
   },
+};
+
+export const useAppColors = () => {
+  const { colorScheme } = useColorScheme();
+  const scheme = colorScheme ?? "light";
+
+  return {
+    primary: THEME[scheme].primary,
+    mutedForeground: THEME[scheme].mutedForeground,
+    destructive: THEME[scheme].destructive,
+  };
 };

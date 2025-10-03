@@ -1,14 +1,13 @@
 import { Stack } from "expo-router";
 
-export default function PageLayout() {
+export default function HomeLayout() {
   return (
     <Stack
       screenOptions={{
         headerShown: false,
       }}
     >
-      <Stack.Screen name="account" />
-      <Stack.Screen name="home" />
+      <Stack.Screen name="services" />
     </Stack>
   );
 }

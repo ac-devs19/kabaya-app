@@ -50,7 +50,7 @@ export default function SignIn() {
           <View className="gap-6">
             <AppLogo />
             <View className="gap-1">
-              <Text className="font-figtree-extrabold text-3xl">
+              <Text className="font-figtree-bold text-2xl">
                 Hello, Welcome!
               </Text>
               <Text className="text-sm font-figtree-regular">

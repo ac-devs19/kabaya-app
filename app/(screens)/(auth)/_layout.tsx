@@ -1,8 +1,8 @@
 import { Icon } from "@/components/ui/icon";
 import { useAuthContext } from "@/contexts/auth-context";
 import { Redirect, router, Stack } from "expo-router";
-import { ChevronLeft } from "lucide-react-native";
-import { TouchableOpacity } from "react-native";
+import { ArrowLeft, ChevronLeft } from "lucide-react-native";
+import { Platform, TouchableOpacity } from "react-native";
 
 export default function AuthLayout() {
   const { user } = useAuthContext();
@@ -23,7 +23,7 @@ export default function AuthLayout() {
                 onPress={() => router.back()}
               >
                 <Icon
-                  as={ChevronLeft}
+                  as={Platform.OS === "ios" ? ChevronLeft : ArrowLeft}
                   size={24}
                   strokeWidth={1.5}
                   className="text-primary"
